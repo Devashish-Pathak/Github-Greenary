@@ -1,0 +1,53 @@
+name: Daily Auto Commit
+
+on:
+  schedule:
+    # Runs once a day at a non-round UTC time to avoid GitHub's cron pile-up.
+    # GitHub does not guarantee exact timing for scheduled workflows, especially
+    # around busy periods, so treat this as "roughly once a day".
+    - cron: '17 9 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Append random log entry
+        run: |
+          set -euo pipefail
+
+          MESSAGES=(
+            "Shipped some invisible progress."
+            "Debugged a bug that never existed."
+            "Refactored nothing, felt great about it."
+            "Optimized a loop that ran once."
+            "Renamed a variable for the better."
+            "Fixed a typo only I will ever see."
+            "Added a comment nobody asked for."
+            "Reviewed my own pull request. Approved."
+            "Increased code coverage by exactly one line."
+            "Untangled a knot I tied yesterday."
+            "Pushed a change to feel something."
+            "Kept the lights on."
+            "Watered the repo. It grew a commit."
+            "Rebalanced the universe by one diff."
+            "Practiced git so git doesn't get rusty."
+          )
+
+          INDEX=$(( RANDOM % ${#MESSAGES[@]} ))
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
+          echo "- **${TIMESTAMP}** — ${MESSAGES[$INDEX]}" >> LOG.md
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add LOG.md
+          git commit -m "chore: daily log entry"
+          git push
