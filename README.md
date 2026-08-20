@@ -1,4 +1,4 @@
-# Hobby Project
+# Github Greenary
 
 A small repo that commits to itself once a day, fully automated via GitHub Actions.
 
