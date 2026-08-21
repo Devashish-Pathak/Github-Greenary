@@ -1,11 +1,17 @@
-name: Daily Auto Commit
+name: Auto Commit
 
 on:
   schedule:
-    # Runs once a day at a non-round UTC time to avoid GitHub's cron pile-up.
-    # GitHub does not guarantee exact timing for scheduled workflows, especially
-    # around busy periods, so treat this as "roughly once a day".
-    - cron: '17 9 * * *'
+    # Four triggers ~6h apart, each at a non-round minute to avoid GitHub's
+    # cron pile-up. The "Random delay" step below then sleeps a random amount
+    # within the following hour before committing, so the actual commit time
+    # varies day to day instead of landing on these exact minutes.
+    # GitHub does not guarantee exact timing for scheduled workflows, so treat
+    # this as "roughly 4 times a day, at roughly these times".
+    - cron: '11 3 * * *'
+    - cron: '23 9 * * *'
+    - cron: '37 15 * * *'
+    - cron: '49 21 * * *'
   workflow_dispatch: {}
 
 permissions:
@@ -17,6 +23,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Random delay
+        run: sleep $(( RANDOM % 3600 ))
 
       - name: Append random log entry
         run: |
@@ -49,5 +58,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add LOG.md
-          git commit -m "chore: daily log entry"
+          git commit -m "chore: log entry"
           git push
