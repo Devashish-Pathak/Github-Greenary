@@ -55,8 +55,8 @@ jobs:
 
       - name: Commit and push
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "Devashish-Pathak"
+          git config user.email "devashish902@gmail.com"
           git add LOG.md
           git commit -m "chore: log entry"
           git push
